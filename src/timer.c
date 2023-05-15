@@ -20,12 +20,11 @@
 // arr：自动重装值。
 // psc：时钟预分频数
 // 这里使用的是定时器3!
-// extern u8 close;
-// extern u8 open;
-u8 cnt1 = 0;
-u8 cnt2 = 0;
-u8 open, close;
-
+// extern uint8_t close;
+// extern uint8_t open;
+uint8_t cnt1 = 0;
+uint8_t cnt2 = 0;
+uint8_t open, close;
 /**
  * @file   TimerNvic_Config
  * @brief  中断优先级NVIC设置
@@ -48,7 +47,6 @@ void TimerNvic_Config(void)
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;        // 响应优先级1
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;           // 允许中断
   NVIC_Init(&NVIC_InitStructure);                           // 根据指定参数初始化中断寄存器
-
   //	  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);
   //	  NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn; 		//中断事件为TIM2
   //    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2; 	//抢占优先级0
@@ -64,7 +62,7 @@ void TimerNvic_Config(void)
  *					psc：时钟预分频数
  * @retval 无
  */
-void TIM2_Config(u16 arr, u16 psc)
+void TIM2_Config(uint16_t arr, uint16_t psc)
 {
   // 定时器定时时间T计算公式：T=(TIM_Period+1)*(TIM_Prescaler+1)/TIMxCLK
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;       // 定义一个定时器结构体变量
@@ -85,7 +83,7 @@ void TIM2_Config(u16 arr, u16 psc)
   TimerNvic_Config();
 }
 
-void TIM3_Config(u16 arr, u16 psc)
+void TIM3_Config(uint16_t arr, uint16_t psc)
 {
   // 定时器定时时间T计算公式：T=(TIM_Period+1)*(TIM_Prescaler+1)/TIMxCLK
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;       // 定义一个定时器结构体变量
@@ -105,7 +103,7 @@ void TIM3_Config(u16 arr, u16 psc)
   TIM_Cmd(TIM3, ENABLE);                     // 关闭TIM2
 }
 
-void TIM4_Config(u16 arr, u16 psc)
+void TIM4_Config(uint16_t arr, uint16_t psc)
 {
   // 定时器定时时间T计算公式：T=(TIM_Period+1)*(TIM_Prescaler+1)/TIMxCLK
   TIM_TimeBaseInitTypeDef TIM_TimeBaseStructure;       // 定义一个定时器结构体变量

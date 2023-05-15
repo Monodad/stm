@@ -1,8 +1,6 @@
 #ifndef __LED_H
 #define __LED_H
 
-#include "stm32f10x.h"
-
 #define LED5 5
 
 #define LED5_GPIO_RCC RCC_APB2Periph_GPIOB

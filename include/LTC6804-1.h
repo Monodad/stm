@@ -2,6 +2,8 @@
     @ingroup LTC68041
     Header for LTC6804-1 Multicell Battery Monitor
 */
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
 
 #ifndef LTC68041_H
 #define LTC68041_H
@@ -136,31 +138,31 @@ static const unsigned int crc15Table[256] = {0x0, 0xc599, 0xceab, 0xb32, 0xd8cf,
 
 void LTC6804_initialize(void);
 
-void set_adc(uint8_t MD, uint8_t DCP, uint8_t CH, uint8_t CHG); // ÉèÖÃADC×´Ì¬
+void set_adc(uint8_t MD, uint8_t DCP, uint8_t CH, uint8_t CHG); // ï¿½ï¿½ï¿½ï¿½ADC×´Ì¬
 
-void LTC6804_adcv(void); // Æô¶¯µç³ØµçÑ¹ADC×ª»»ºÍÂÖÑ¯×´Ì¬
+void LTC6804_adcv(void); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½Ñ¹ADC×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯×´Ì¬
 
-void LTC6804_adax(void); // Æô¶¯GPIO ADC×ª»»ºÍÂÖÑ¯×´Ì¬
+void LTC6804_adax(void); // ï¿½ï¿½ï¿½ï¿½GPIO ADC×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯×´Ì¬
 
-uint8_t LTC6804_rdcv(uint8_t reg, uint8_t total_ic, uint16_t cell_codes[][12]); // ¶ÁÈ¡µç³ØµçÑ¹
+uint8_t LTC6804_rdcv(uint8_t reg, uint8_t total_ic, uint16_t cell_codes[][12]); // ï¿½ï¿½È¡ï¿½ï¿½Øµï¿½Ñ¹
 
 void LTC6804_rdcv_reg(uint8_t reg, uint8_t nIC, uint8_t *data);
 
-int8_t LTC6804_rdaux(uint8_t reg, uint8_t nIC, uint16_t aux_codes[][6]); // ¶ÁÈ¡¸¨Öú¼Ä´æÆ÷
+int8_t LTC6804_rdaux(uint8_t reg, uint8_t nIC, uint16_t aux_codes[][6]); // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½
 
 void LTC6804_rdaux_reg(uint8_t reg, uint8_t nIC, uint8_t *data);
 
-void LTC6804_clrcell(void); // Çå³ýµç³ØµçÑ¹¼Ä´æÆ÷A¡¢B¡¢C ºÍD¡£
+void LTC6804_clrcell(void); // ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½Ñ¹ï¿½Ä´ï¿½ï¿½ï¿½Aï¿½ï¿½Bï¿½ï¿½C ï¿½ï¿½Dï¿½ï¿½
 
-void LTC6804_clraux(void); // Çå³ý¸¨Öú¼Ä´æÆ÷ A ºÍ B
+void LTC6804_clraux(void); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½ï¿½ï¿½ A ï¿½ï¿½ B
 
-void LTC6804_wrcfg(uint8_t nIC, uint8_t config[][6]); // Ð´ÅäÖÃ¼Ä´æÆ÷
+void LTC6804_wrcfg(uint8_t nIC, uint8_t config[][6]); // Ð´ï¿½ï¿½ï¿½Ã¼Ä´ï¿½ï¿½ï¿½
 
-int8_t LTC6804_rdcfg(uint8_t nIC, uint8_t r_config[][8]); // ¶ÁÅäÖÃ¼Ä´æÆ÷
+int8_t LTC6804_rdcfg(uint8_t nIC, uint8_t r_config[][8]); // ï¿½ï¿½ï¿½ï¿½ï¿½Ã¼Ä´ï¿½ï¿½ï¿½
 
 void delayMicroseconds(unsigned int x);
 
-void wakeup_idle(void); // À¨ºÅºóÐè¼Óvoid£¬·ñÔò±¨¾¯
+void wakeup_idle(void); // ï¿½ï¿½ï¿½Åºï¿½ï¿½ï¿½ï¿½voidï¿½ï¿½ï¿½ï¿½ï¿½ò±¨¾ï¿½
 
 void wakeup_sleep(void);
 
@@ -170,13 +172,13 @@ void spi_write_array(uint8_t length, uint8_t *data);
 
 void spi_write_read(uint8_t *TxData, uint8_t TXlen, uint8_t *rx_data, uint8_t RXlen);
 
-void LTC6804_cvst(void); // ×Ô²âÊÔÄ£Ê½
+void LTC6804_cvst(void); // ï¿½Ô²ï¿½ï¿½ï¿½Ä£Ê½
 
-void LTC6804_ADSTAT(void); // Æô¶¯×´Ì¬×éADC×ª»»£¬ÂË²¨Ä£Ê½
+void LTC6804_ADSTAT(void); // ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ADC×ªï¿½ï¿½ï¿½ï¿½ï¿½Ë²ï¿½Ä£Ê½
 
-int8_t LTC6804_rdstat(uint8_t reg, uint8_t total_ic, uint16_t stat_codes[][6]); // ¶Á×´Ì¬¼Ä´æÆ÷
+int8_t LTC6804_rdstat(uint8_t reg, uint8_t total_ic, uint16_t stat_codes[][6]); // ï¿½ï¿½×´Ì¬ï¿½Ä´ï¿½ï¿½ï¿½
 
 void LTC6804_rdstat_reg(uint8_t reg, uint8_t total_ic, uint8_t *data);
 
-void LTC6804_adcvax(void); // Æô¶¯×éºÏµç³ØµçÑ¹ÒÔ¼°GPIO1¡¢GPIO2×ª»»ºÍÂÖÑ¯×´Ì¬
+void LTC6804_adcvax(void); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïµï¿½Øµï¿½Ñ¹ï¿½Ô¼ï¿½GPIO1ï¿½ï¿½GPIO2×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¯×´Ì¬
 #endif

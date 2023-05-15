@@ -6,18 +6,11 @@
 #include <stdint.h>
 #include "LTC6804-1.h"
 #include "spi.h"
-#include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/gpio.h>
+#include "../include/SYSTICK.h"
+
 // PB12��ΪCS����
 #define LTC6804_CS GPIO4
-#define LTC6804_CS_high          \
-  {                              \
-    gpio_set(GPIOA, LTC6804_CS); \
-  }
-#define LTC6804_CS_low             \
-  {                                \
-    gpio_clear(GPIOA, LTC6804_CS); \
-  }
+
 /*!
   6804 conversion command variables.
 */
@@ -31,7 +24,7 @@ uint8_t ADAX[2]; //!< GPIO conversion command.
   The Function also intializes the ADCV and ADAX commands to convert all cell and GPIO voltages in
   the Normal ADC mode.
 */
-void LTC6804_initialize()
+void LTC6804_initialize(void)
 {
   SPI1_Init();
   set_adc(MD_NORMAL, DCP_DISABLED, CELL_CH_ALL, AUX_CH_ALL);
@@ -109,9 +102,9 @@ void LTC6804_adcv()
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake. This command can be removed.
   wakeup_idle();
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_array(4, cmd);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*
   LTC6804_adcv Function sequence:
@@ -152,9 +145,9 @@ void LTC6804_adax()
   cmd[3] = (uint8_t)(cmd_pec);
   wakeup_idle();
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake. This command can be removed.
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_array(4, cmd);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*
   LTC6804_adax Function sequence:
@@ -384,9 +377,9 @@ void LTC6804_rdcv_reg(uint8_t reg,                // Determines which cell volta
   wakeup_idle();
   wakeup_idle();
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_read(cmd, 4, data, (REG_LEN * total_ic));
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*
   LTC6804_rdcv_reg Function Process:
@@ -601,9 +594,9 @@ void LTC6804_rdaux_reg(uint8_t reg,               // Determines which GPIO volta
   wakeup_idle();
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake, this command can be removed.
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_read(cmd, 4, data, (REG_LEN * total_ic));
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*
   LTC6804_rdaux_reg Function Process:
@@ -646,9 +639,9 @@ void LTC6804_clrcell()
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake. This command can be removed.
   wakeup_idle();
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_read(cmd, 4, 0, 0);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*
   LTC6804_clrcell Function sequence:
@@ -692,9 +685,9 @@ void LTC6804_clraux()
   wakeup_idle();
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake.This command can be removed.
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_read(cmd, 4, 0, 0);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*
   LTC6804_clraux Function sequence:
@@ -776,10 +769,10 @@ void LTC6804_wrcfg(uint8_t total_ic,                    // The number of ICs bei
   wakeup_idle();
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake.This command can be removed.
   // 5
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   // delayMicroseconds(3);
   spi_write_array(CMD_LEN, cmd);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
   // free(cmd);
 }
 /*
@@ -847,10 +840,10 @@ int8_t LTC6804_rdcfg(uint8_t total_ic,     // Number of ICs in the system
   wakeup_idle();
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake. This command can be removed.
   // 3
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
 
   spi_write_read(cmd, 4, rx_data, (BYTES_IN_REG * total_ic)); // Read the configuration data of all ICs on the daisy chain into
-  LTC6804_CS_high;                                            // rx_data[] array
+  gpio_set(GPIOA, LTC6804_CS);                                // rx_data[] array
 
   for (current_ic = 0; current_ic < total_ic; current_ic++) // executes for each LTC6804 in the daisy chain and packs the data
   {                                                         // into the r_config array as well as check the received Config data
@@ -899,11 +892,11 @@ void delayMicroseconds(unsigned int x)
  *****************************************************/
 void wakeup_idle()
 {
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   //  delayMicroseconds(5); //Guarantees the isoSPI will be in ready mode
   delay_ms(10);
 
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 
 /*!****************************************************
@@ -913,9 +906,9 @@ void wakeup_idle()
  *****************************************************/
 void wakeup_sleep()
 {
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   delayMicroseconds(5); // Guarantees the LTC6804 will be in standby
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 /*!**********************************************************
  \brief calaculates  and returns the CRC15
@@ -1011,9 +1004,9 @@ void LTC6804_cvst()
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake. This command can be removed.
   wakeup_idle();
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_array(4, cmd);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 
 void LTC6804_ADSTAT() // ����״̬��ADCת�����˲�ģʽ
@@ -1035,9 +1028,9 @@ void LTC6804_ADSTAT() // ����״̬��ADCת�����˲�ģʽ
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake. This command can be removed.
   wakeup_idle();
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_array(4, cmd);
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 
 /*��״̬�Ĵ���*/
@@ -1169,9 +1162,9 @@ void LTC6804_rdstat_reg(uint8_t reg,      // Determines which GPIO voltage regis
   wakeup_idle();
   wakeup_idle(); // This will guarantee that the LTC6804 isoSPI port is awake, this command can be removed.
   // 4
-  LTC6804_CS_low;
+  gpio_clear(GPIOA, LTC6804_CS);
   spi_write_read(cmd, 4, data, (REG_LEN * total_ic));
-  LTC6804_CS_high;
+  gpio_set(GPIOA, LTC6804_CS);
 }
 
 void LTC6804_adcvax() // ������ϵ�ص�ѹ�Լ�GPIO1��GPIO2ת������ѯ״̬
@@ -1196,7 +1189,7 @@ void LTC6804_adcvax() // ������ϵ�ص�ѹ�Լ�GPIO1��GPIO2�
   wakeup_idle();
   // 4
   // ����ָ�����LTC6804-1˵����P53ҳ,�롰�𶯵�ص�ѹADCת����˵������
-  LTC6804_CS_low;          // ��CSB�ź�����
-  spi_write_array(4, cmd); // ��������
-  LTC6804_CS_high;         // ��CSB�ź�����
+  gpio_clear(GPIOA, LTC6804_CS); // ��CSB�ź�����
+  spi_write_array(4, cmd);       // ��������
+  gpio_set(GPIOA, LTC6804_CS);   // ��CSB�ź�����
 }

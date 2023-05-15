@@ -10,8 +10,7 @@
  ********************************************************************************/
 // ͷ�ļ�
 
-#include "SYSTICK.h"
-
+#include "../include/SYSTICK.h"
 static volatile uint32_t systick_delay = 0;
 
 extern uint16_t nTime;
@@ -22,7 +21,8 @@ extern uint16_t nTime;
  * @param  ��
  * @retval ��
  */
-void SYSTICK_Init(void)
+uint32_t rcc_ahb_frequency = 16000000;
+void systick_Init(void)
 {
   /*SystemCoreClock/ 1000000��1us�ж�1�Σ�SystemCoreClock/ 1000��1ms�ж�һ��*/
   systick_set_clocksource(STK_CSR_CLKSOURCE_AHB_DIV8);
@@ -31,19 +31,6 @@ void SYSTICK_Init(void)
   systick_counter_enable();
   systick_interrupt_enable();
 }
-/**
- * @file   delay_us
- * @brief  ΢����ʱ
- * @param  ��ʱʱ��
- * @retval ��
- */
-
-/**
- * @file   delay_ms
- * @brief  ������ʱ
- * @param  ��ʱʱ��
- * @retval ��
- */
 
 void delay_ms(uint32_t ms)
 {

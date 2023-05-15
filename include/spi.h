@@ -18,5 +18,5 @@
 void SPI1_Init(void);                       // ��ʼ��SPI��
 void SPI1_SetSpeed(uint8_t SpeedSet);       // ����SPI�ٶ�
 uint8_t SPI1_ReadWriteByte(uint8_t TxData); // SPI���߶�дһ���ֽ�
-
+void spi_setup(void);
 #endif

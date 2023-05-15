@@ -1,7 +1,7 @@
 #include "spi.h"
 
 #include <libopencm3/stm32/rcc.h>
-#include <libopencm3/stm32/gpio.h>s
+#include <libopencm3/stm32/gpio.h>
 //////////////////////////////////////////////////////////////////////////////////
 // 本程序只供学习使用，未经作者许可，不得用于其它任何用途
 // ALIENTEK战舰STM32开发板
@@ -36,7 +36,7 @@ void SPI1_Init(void)
 	// GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_PP; // PB13/14/15复用推挽输出
 	// GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
 	// GPIO_Init(GPIOA, &GPIO_InitStructure); // 初始化GPIOB
-	GPIO_get(GPIOA, GPIO5 | GPIO6 | GPIO7);
+	gpio_get(GPIOA, GPIO5 | GPIO6 | GPIO7);
 	// GPIO_SetBits(GPIOA, GPIO_Pin_5 | GPIO_Pin_6 | GPIO_Pin_7); // PB13/14/15上拉
 
 	// SPI_InitStructure.SPI_Direction = SPI_Direction_2Lines_FullDuplex; // 设置SPI单向或者双向的数据模式:SPI设置为双线双向全双工
@@ -63,7 +63,7 @@ void SPI1_Init(void)
 // SPI_BaudRatePrescaler_8   8分频
 // SPI_BaudRatePrescaler_16  16分频
 // SPI_BaudRatePrescaler_256 256分频
-static int spi_setup(void)
+void spi_setup(void)
 {
 	gpio_set_mode(GPIO_BANK_SPI1_MISO, GPIO_MODE_INPUT, GPIO_CNF_OUTPUT_PUSHPULL, GPIO_SPI1_MISO);
 	gpio_set_mode(GPIO_BANK_SPI1_MOSI, GPIO_MODE_OUTPUT_2_MHZ, GPIO_CNF_INPUT_PULL_UPDOWN, GPIO_SPI1_MOSI);

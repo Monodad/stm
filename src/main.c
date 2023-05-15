@@ -8,20 +8,28 @@
  **********************************************************************************/
 
 // 头文件
-#include "main.h"
-#include "usart.h"
-#include "usart2.h"
-#include "BQ76930.h"
-#include "IO_CTRL.h"
-#include <stdio.h>
-#include "math.h"
-#include "timer.h"
-#include "can.h"
-#include "LTC6804-1.h"
-#include "spi.h"
-#include "adc.h"
-#include "SYSTICK.h"
+#include <libopencm3/stm32/rcc.h>
+#include <libopencm3/stm32/gpio.h>
+#include <libopencm3/stm32/spi.h>
+#include <libopencm3/stm32/usart.h>
+#include <libopencm3/stm32/exti.h>
+#include <libopencm3/cm3/nvic.h>
 
+#include "../include/usart.h"
+#include "../include/usart2.h"
+#include "../include/BQ76930.h"
+#include "../include/IO_CTRL.h"
+#include <stdio.h>
+#include "../include/math.h"
+#include "../include/timer.h"
+#include "../include/can.h"
+#include "../include/LTC6804-1.h"
+#include "../include/spi.h"
+#include "../include/adc.h"
+#include "../include/SYSTICK.h"
+void Get_Update_ALL_Data(void);
+void Get_Cell_Voltage(void);
+void Get_Cell_Voltage_Max_Min(void);
 extern unsigned char ucUSART1_ReceiveDataBuffer[];
 unsigned char BMS_DATA_FLAG;
 
@@ -269,67 +277,67 @@ void Get_Cell_Voltage_Max_Min(void)
 
 int main(void)
 {
-    int UV_FLAG = 0, OV_FLAG = 0;
+    // int UV_FLAG = 0, OV_FLAG = 0;
 
-    SYSTICK_Init(); // 系统初始化，时钟配置；
-    delay_ms(1000);
-    delay_ms(1000);
-    delay_ms(1000);
-    delay_ms(1000);
-    delay_ms(1000);
-    delay_ms(1000);
-    delay_ms(1000);
+    // systick_Init(); // 系统初始化，时钟配置；
+    // delay_ms(1000);
+    // delay_ms(1000);
+    // delay_ms(1000);
+    // delay_ms(1000);
+    // delay_ms(1000);
+    // delay_ms(1000);
+    // delay_ms(1000);
     // NVIC_SetPriorityGrouping(NVIC_PriorityGroup_2);
     // NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2); // 设置NVIC中断分组2:2位抢占优先级，2位响应优先级
 
-    IO_CTRL_Config(); // 系统的一些IO口设置；
-    delay_ms(100);
+    // IO_CTRL_Config(); // 系统的一些IO口设置；
+    // delay_ms(100);
     LTC6804_initialize(); // LTC6804初始化配置；
-    delay_ms(1000);
+    // delay_ms(1000);
 
     // TIM2_Config(99, 7199);                                                    // 100mS定时器中断
     // CAN_Mode_Init(CAN_SJW_1tq, CAN_BS2_8tq, CAN_BS1_9tq, 4, CAN_Mode_Normal); // CAN初始化环回模式,波特率500Kbps
     // Adc_Init();                                                               // 温度，电流ADC测量；
     // UartSend("MODE_CFG(1);DIR(1);FSIMG(2097152,0,0,220,176,0);\r\n");
-    delay_ms(1000);
+    // delay_ms(1000);
 
-    while (1)
-    {
-        LTC6804_adcvax();                     // 6804初始化
-        LTC6804_rdcv(0, cell_zu, cell_codes); // 6804获取12节电池电压
-        // show();                               // 数据更新并上传上位机，屏，蓝牙
+    // while (1)
+    // {
+    //     // LTC6804_adcvax();                     // 6804初始化
+    //     // LTC6804_rdcv(0, cell_zu, cell_codes); // 6804获取12节电池电压
+    //     // show();                               // 数据更新并上传上位机，屏，蓝牙
 
-        if (Max > 4200) // 电池最大电压大于4200mv
-        {
-            Only_Close_CHG(); // 关闭充电MOS管
-            OV_FLAG = 1;
-        }
-        if (OV_FLAG == 1) // 过压状态
-        {
-            if (Max < 4100) // 电池最大电压小于4100mv
-            {
-                Only_Open_CHG(); // 打开充电MOS管
-                OV_FLAG = 0;
-            }
-        }
-        if (Min < 2800) // 电池最小电压低于4200mv
-        {
-            Only_Close_DSG(); // 关闭放电MOS管
-            UV_FLAG = 1;
-        }
-        if (UV_FLAG == 1) // 欠压状态
-        {
-            if (Min > 3000) // 电池最小电压大于3000mv
-            {
-                Only_Open_DSG(); // 打开放电MOS管
-                UV_FLAG = 0;
-            }
-        }
-        if (Batt[2] > 8000) // 如果电流大于2000ma，关闭充放电MOS管
-        {
-            Close_DSG_CHG();
-        }
-    }
+    //     // if (Max > 4200) // 电池最大电压大于4200mv
+    //     // {
+    //         Only_Close_CHG(); // 关闭充电MOS管
+    //         OV_FLAG = 1;
+    //     }
+    //     if (OV_FLAG == 1) // 过压状态
+    //     {
+    //         if (Max < 4100) // 电池最大电压小于4100mv
+    //         {
+    //             Only_Open_CHG(); // 打开充电MOS管
+    //             OV_FLAG = 0;
+    //         }
+    //     }
+    //     if (Min < 2800) // 电池最小电压低于4200mv
+    //     {
+    //         Only_Close_DSG(); // 关闭放电MOS管
+    //         UV_FLAG = 1;
+    //     }
+    //     if (UV_FLAG == 1) // 欠压状态
+    //     {
+    //         if (Min > 3000) // 电池最小电压大于3000mv
+    //         {
+    //             Only_Open_DSG(); // 打开放电MOS管
+    //             UV_FLAG = 0;
+    //         }
+    //     }
+    //     if (Batt[2] > 8000) // 如果电流大于2000ma，关闭充放电MOS管
+    //     {
+    //         Close_DSG_CHG();
+    //     }
+    // }
 }
 
 /*********************************************************************************************************

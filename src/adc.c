@@ -67,7 +67,7 @@ void Adc_Init(void)
 }
 // ���ADCֵ
 // ch:ͨ��ֵ 0~3
-u16 Get_Adc0(u8 ch)
+uint16_t Get_Adc0(uint8_t ch)
 {
 	// ����ָ��ADC�Ĺ�����ͨ����һ�����У�����ʱ��
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_0, 1, ADC_SampleTime_239Cycles5); // ADC1,ADCͨ��,����ʱ��Ϊ239.5����
@@ -79,7 +79,7 @@ u16 Get_Adc0(u8 ch)
 	return ADC_GetConversionValue(ADC1); // �������һ��ADC1�������ת�����
 }
 
-u16 Get_Adc1(u8 ch)
+uint16_t Get_Adc1(uint8_t ch)
 {
 	// ����ָ��ADC�Ĺ�����ͨ����һ�����У�����ʱ��
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_1, 1, ADC_SampleTime_239Cycles5); // ADC1,ADCͨ��,����ʱ��Ϊ239.5����
@@ -91,7 +91,7 @@ u16 Get_Adc1(u8 ch)
 	return ADC_GetConversionValue(ADC1); // �������һ��ADC1�������ת�����
 }
 
-u16 Get_Adc4(u8 ch)
+uint16_t Get_Adc4(uint8_t ch)
 {
 	// ����ָ��ADC�Ĺ�����ͨ����һ�����У�����ʱ��
 	ADC_RegularChannelConfig(ADC1, ADC_Channel_9, 1, ADC_SampleTime_239Cycles5); // ADC1,ADCͨ��,����ʱ��Ϊ239.5����
@@ -103,10 +103,10 @@ u16 Get_Adc4(u8 ch)
 	return ADC_GetConversionValue(ADC1); // �������һ��ADC1�������ת�����
 }
 
-u16 Get_Adc_Average0(u8 ch, u8 times)
+uint16_t Get_Adc_Average0(uint8_t ch, uint8_t times)
 {
 	u32 temp_val = 0;
-	u8 t;
+	uint8_t t;
 	for (t = 0; t < times; t++)
 	{
 		temp_val += Get_Adc0(ch);
@@ -115,10 +115,10 @@ u16 Get_Adc_Average0(u8 ch, u8 times)
 	return temp_val / times;
 }
 
-u16 Get_Adc_Average1(u8 ch, u8 times)
+uint16_t Get_Adc_Average1(uint8_t ch, uint8_t times)
 {
 	u32 temp_val = 0;
-	u8 t;
+	uint8_t t;
 	for (t = 0; t < times; t++)
 	{
 		temp_val += Get_Adc1(ch);
@@ -127,10 +127,10 @@ u16 Get_Adc_Average1(u8 ch, u8 times)
 	return temp_val / times;
 }
 
-u16 Get_Adc_Average4(u8 ch, u8 times)
+uint16_t Get_Adc_Average4(uint8_t ch, uint8_t times)
 {
 	u32 temp_val = 0;
-	u8 t;
+	uint8_t t;
 	for (t = 0; t < times; t++)
 	{
 		temp_val += Get_Adc4(ch);
